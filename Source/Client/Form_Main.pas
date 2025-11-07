@@ -7,7 +7,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.Buttons, System.Win.ScktComp, Vcl.AppEvnts, Vcl.ComCtrls, Winapi.MMSystem,
-  Registry, Vcl.Menus, Vcl.Mask, Clipbrd, sndkey32, StreamManager, zLibEx, ShellApi;
+  Registry, Vcl.Menus, Vcl.Mask, Clipbrd, sndkey32, StreamManager, zLibEx, ShellApi,System.IniFiles, System.IOUtils;
 
 type
   TThread_Connection_Main = class(TThread)
@@ -64,6 +64,10 @@ type
     About_BitBtn: TBitBtn;
     TargetID_MaskEdit: TMaskEdit;
     Clipboard_Timer: TTimer;
+    mainMenu: TMainMenu;
+    Configurar1: TMenuItem;
+    Conexo1: TMenuItem;
+
     procedure Connect_BitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Reconnect_TimerTimer(Sender: TObject);
@@ -83,6 +87,7 @@ type
     procedure About_BitBtnClick(Sender: TObject);
     procedure TargetID_MaskEditKeyPress(Sender: TObject; var Key: Char);
     procedure Clipboard_TimerTimer(Sender: TObject);
+    procedure Conexo1Click(Sender: TObject);
   public
     Main_Socket: TClientSocket;
     Desktop_Socket: TClientSocket;
@@ -100,7 +105,7 @@ type
     Thread_Connection_Desktop: TThread_Connection_Desktop;
     Thread_Connection_Keyboard: TThread_Connection_Keyboard;
     Thread_Connection_Files: TThread_Connection_Files;
-
+    procedure lerInifile;
     procedure ClearConnection;
     procedure SetOffline;
     procedure SetOnline;
@@ -118,10 +123,11 @@ var
   OldWallpaper: string;
   OldClipboardText: string;
   Accessed: Boolean;
+      //modificado aqui wesley   06/11/25
+  Host:string;
+  Port :integer; // Port of Sockets
+ const
 
-const
-  Host = 'localhost'; // Host of Sockets  (Insert the IP Address or DNS of your Server)
-  Port = 3898; // Port of Sockets
   ConnectionTimeout = 60; // Timeout of connection (in secound)
   ProcessingSlack = 2; // Processing slack for Sleep Commands
 
@@ -130,11 +136,12 @@ implementation
 {$R *.dfm}
 
 uses
-  Form_Password, Form_RemoteScreen, Form_Chat, Form_ShareFiles;
+  Form_Password, Form_RemoteScreen, Form_Chat, Form_ShareFiles, FormConfigurar;
 
 constructor TThread_Connection_Main.Create(aSocket: TCustomWinSocket);
 begin
   inherited Create(False);
+  frm_Main.lerInifile;
   Socket := aSocket;
   FreeOnTerminate := true;
 end;
@@ -160,6 +167,9 @@ begin
   Socket := aSocket;
   FreeOnTerminate := true;
 end;
+
+
+
 
 // Get current Version
 function GetAppVersionStr: string;
@@ -217,7 +227,7 @@ end;
 
 procedure Tfrm_Main.About_BitBtnClick(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'https://github.com/maickonn/AllaKore_Remote', nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', 'https://github.com/wesleyspl/AllaKore_Remote', nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure Tfrm_Main.ClearConnection;
@@ -532,6 +542,14 @@ begin
   SetString(Result, PAnsiChar(M.Memory), M.Size);
 end;
 
+procedure Tfrm_Main.Conexo1Click(Sender: TObject);
+var
+   formConfigurar: TfrmConfigurar;
+begin
+   formConfigurar := TfrmConfigurar.Create(nil);
+   formConfigurar.ShowModal;
+end;
+
 procedure Tfrm_Main.Connect_BitBtnClick(Sender: TObject);
 begin
   if not(TargetID_MaskEdit.Text = '   -   -   ') then
@@ -581,9 +599,37 @@ end;
 
 procedure Tfrm_Main.FormCreate(Sender: TObject);
 var
+    Ini: TIniFile;
+  IniPath: string;
+  Host: string;
+  Porta: Integer;
   _Host: AnsiString;
   _Port: Integer;
+
 begin
+
+  //mudando aqui pra pegar as variaveis do ini
+  frm_Main.lerInifile;
+
+
+      // Caminho completo do INI (mesma pasta do executável)
+  IniPath := TPath.Combine(ExtractFilePath(ParamStr(0)), 'config.ini');
+
+  Ini := TIniFile.Create(IniPath);
+
+
+
+
+
+      Host := Ini.ReadString('Servidor', 'Host', '');
+      Port := Ini.ReadInteger('Servidor', 'Porta', 0);
+
+    Ini.Free;
+
+
+
+
+
   // Insert version on Caption of the Form
   Caption := Caption + ' - ' + GetAppVersionStr;
 
@@ -652,6 +698,32 @@ procedure Tfrm_Main.Keyboard_SocketError(Sender: TObject; Socket: TCustomWinSock
 begin
   ErrorCode := 0;
 end;
+
+procedure Tfrm_Main.lerInifile;
+   var
+  Ini: TIniFile;
+  IniPath: string;
+  Host: string;
+  Porta: Integer;
+begin
+  // Caminho completo do INI (mesma pasta do executável)
+  IniPath := TPath.Combine(ExtractFilePath(ParamStr(0)), 'config.ini');
+
+  Ini := TIniFile.Create(IniPath);
+
+
+
+
+
+      Host := Ini.ReadString('Servidor', 'Host', '');
+      Port := Ini.ReadInteger('Servidor', 'Porta', 0);
+
+    Ini.Free;
+  end;
+
+
+
+
 
 procedure Tfrm_Main.Main_SocketConnect(Sender: TObject; Socket: TCustomWinSocket);
 begin

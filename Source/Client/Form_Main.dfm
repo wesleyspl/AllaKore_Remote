@@ -12,7 +12,8 @@ object frm_Main: Tfrm_Main
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Font.Style = []
+  Font.Style = [fsBold]
+  Menu = mainMenu
   Position = poScreenCenter
   StyleElements = [seFont, seClient]
   OnClose = FormClose
@@ -9754,7 +9755,7 @@ object frm_Main: Tfrm_Main
   object Status_Label: TLabel
     Left = 35
     Top = 404
-    Width = 32
+    Width = 36
     Height = 13
     Caption = 'Offline'
   end
@@ -12882,18 +12883,31 @@ object frm_Main: Tfrm_Main
   object Reconnect_Timer: TTimer
     Interval = 5000
     OnTimer = Reconnect_TimerTimer
-    Left = 56
-    Top = 296
+    Left = 40
+    Top = 224
   end
   object Timeout_Timer: TTimer
     Enabled = False
     OnTimer = Timeout_TimerTimer
-    Left = 160
+    Left = 144
     Top = 224
   end
   object Clipboard_Timer: TTimer
     OnTimer = Clipboard_TimerTimer
-    Left = 240
+    Left = 256
     Top = 224
+  end
+  object mainMenu: TMainMenu
+    BiDiMode = bdRightToLeft
+    ParentBiDiMode = False
+    Left = 200
+    Top = 344
+    object Configurar1: TMenuItem
+      Caption = 'Configurar'
+      object Conexo1: TMenuItem
+        Caption = 'Conex'#227'o'
+        OnClick = Conexo1Click
+      end
+    end
   end
 end
