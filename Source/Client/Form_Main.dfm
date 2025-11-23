@@ -3,7 +3,7 @@ object frm_Main: Tfrm_Main
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'AllaKore Remote (BETA)'
+  Caption = 'Cerrdo Remote (BETA)'
   ClientHeight = 433
   ClientWidth = 344
   Color = clBtnFace
@@ -8489,9 +8489,9 @@ object frm_Main: Tfrm_Main
   object Title1_Label: TLabel
     Left = 128
     Top = 16
-    Width = 169
+    Width = 159
     Height = 48
-    Caption = 'AllaKore'
+    Caption = 'Cerrado'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -40
@@ -8499,6 +8499,7 @@ object frm_Main: Tfrm_Main
     Font.Style = [fsBold]
     ParentFont = False
     StyleElements = [seClient, seBorder]
+    OnClick = Title1_LabelClick
   end
   object Title2_Label: TLabel
     Left = 191

@@ -88,6 +88,7 @@ type
     procedure TargetID_MaskEditKeyPress(Sender: TObject; var Key: Char);
     procedure Clipboard_TimerTimer(Sender: TObject);
     procedure Conexo1Click(Sender: TObject);
+    procedure Title1_LabelClick(Sender: TObject);
   public
     Main_Socket: TClientSocket;
     Desktop_Socket: TClientSocket;
@@ -806,6 +807,11 @@ begin
     end;
   end;
   Inc(Timeout);
+end;
+
+procedure Tfrm_Main.Title1_LabelClick(Sender: TObject);
+begin
+
 end;
 
 // Connection are Main
